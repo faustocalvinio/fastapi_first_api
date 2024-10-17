@@ -1,0 +1,6 @@
+@echo off
+echo Ejecutando Docker Compose...
+docker-compose up -d
+
+echo Iniciando la aplicación con Uvicorn...
+uvicorn app.main:app --reload

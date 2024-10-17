@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from app.routes import car_router
 
+
 app = FastAPI()
 
 app.include_router(car_router)

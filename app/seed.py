@@ -1,13 +1,17 @@
+import os
+from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import asyncio
+load_dotenv()
 
-# Database configuration
-MONGODB_URL = "mongodb://admin:admin_password@127.0.0.1:27017/"
-DB_NAME = "cars_database"
+
+MONGODB_URL = os.getenv('MONGODB_URI')
+DB_NAME = "cars_database_python"
 COLLECTION_NAME = "cars"
 
 # Initialize MongoDB connection
+print(MONGODB_URL)
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
@@ -38,5 +42,5 @@ async def seed_data():
 
 # Main function to run the seed
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(seed_data())
+    asyncio.run(seed_data())
+

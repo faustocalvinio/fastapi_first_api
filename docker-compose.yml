@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  mongodb:
+      image: mongo:5.0.27
+      container_name: cars_database_python
+      ports:
+        - "27017:27017"
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: admin_password
+       
+      volumes:
+        - "./data/db:/data/db"

@@ -2,12 +2,9 @@ from bson import ObjectId
 from app.db import collection
 
 
-def car_helper(car) -> dict:
-    return {
-        "id": str(car["_id"]),
-        "name": car["name"],
-        "price": car["price"],
-    }
+def car_helper(car):
+    car["_id"] = str(car["_id"])
+    return car
 
 
 async def get_cars():
@@ -32,4 +29,21 @@ async def delete_car_by_id(car_id: str):
 async def create_car(car_data: dict):
     new_car = await collection.insert_one(car_data)
     created_car = await collection.find_one({"_id": new_car.inserted_id})
-    return car_helper(created_car)
+
+    if created_car:
+        return car_helper(created_car)
+
+
+# def car_helper(car) -> dict:
+#     return {
+
+#         "id": str(car["_id"]),
+#         "name": car["name"],
+#         "price": car["price"],
+#     }
+# async def get_cars():
+#     cars = []
+#     async for car in collection.find():
+#         cars.append(car_helper(car))
+#     print(cars)
+#     return cars

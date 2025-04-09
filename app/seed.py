@@ -1,29 +1,21 @@
 import os
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseModel
 import asyncio
+
 load_dotenv()
 
 
-MONGODB_URL = os.getenv('MONGODB_URI')
+MONGODB_URL = os.getenv("MONGODB_URI")
 DB_NAME = "cars_database_python"
 COLLECTION_NAME = "cars"
 
-# Initialize MongoDB connection
-print(MONGODB_URL)
 client = AsyncIOMotorClient(MONGODB_URL)
 db = client[DB_NAME]
 collection = db[COLLECTION_NAME]
 
-# Define the Car model
-class Car(BaseModel):
-    name: str
-    price: int
-
-# Seed data
 async def seed_data():
-    cars = [
+    seedCarsData = [
         {"name": "Toyota Corolla", "price": 20000},
         {"name": "Honda Civic", "price": 22000},
         {"name": "Ford Mustang", "price": 30000},
@@ -33,14 +25,11 @@ async def seed_data():
         {"name": "Audi A4", "price": 37000},
         {"name": "Tesla Model 3", "price": 45000},
         {"name": "Mazda CX-5", "price": 28000},
-        {"name": "Subaru Outback", "price": 31000}
+        {"name": "Subaru Outback", "price": 31000},
     ]
 
-    # Insert seed data into the collection
-    result = await collection.insert_many(cars)
+    result = await collection.insert_many(seedCarsData)
     print(f"{len(result.inserted_ids)} cars inserted into the database.")
 
-# Main function to run the seed
 if __name__ == "__main__":
     asyncio.run(seed_data())
-

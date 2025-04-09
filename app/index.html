@@ -4,13 +4,140 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Cars API</title>
+      <style>
+         body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+               "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+         }
+         input {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+         }
+         button {
+            margin: 5px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+         }
+         button:hover {
+            background-color: #0056b3;
+         }
+         h4 {
+            font-size: 26px;
+            text-align: center;
+         }
+      </style>
    </head>
    <body>
       <h1>Cars API</h1>
-      <h4>Routes available:</h4>
-      <ol>
-         <li>Get all cars</li>
-         <li>Get car by id</li>
-      </ol>
+      <button id="getAllCarsButton">Get all cars</button>
+      <ol id="carsList"></ol>
+      <form id="postCarForm">
+         <h4>Add car</h4>
+         <input type="text" name="name" id="name" placeholder="Name" />
+         <input type="number" name="price" id="price" placeholder="Price" />
+         <button type="submit">OK</button>
+      </form>
+      <form id="getCarByIdForm">
+         <h4>Get car by id</h4>
+         <input type="text" id="carId" placeholder="Enter car ID" />
+         <button type="submit">Get Car</button>
+      </form>
+
+      <form id="deleteCarForm">
+         <h4>Delete car by id</h4>
+         <input type="text" id="carIdToDelete" placeholder="Enter car ID" />
+         <button type="submit">Delete Car</button>
+      </form>
+      <script>
+         const deleteCarForm = document.getElementById("deleteCarForm");
+         const getAllCarsButton = document.getElementById("getAllCarsButton");
+         const carsList = document.getElementById("carsList");
+         const postCarForm = document.getElementById("postCarForm");
+         const getCarByIdForm = document.getElementById("getCarByIdForm");
+
+         const getAllCars = async () => {
+            const response = await fetch("/api/cars");
+            const data = await response.json();
+            return data;
+         };
+         const getCarById = async (id) => {
+            const response = await fetch(`/api/cars/${id}`);
+            const data = await response.json();
+            console.log(data);
+         };
+         const postCar = async (car) => {
+            const response = await fetch("/api/cars", {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify(car),
+            });
+            const data = await response.json();
+            console.log(data);
+         };
+         const deleteCar = async (id) => {
+            const response = await fetch(`/api/cars/${id}`, {
+               method: "DELETE",
+            });
+            const data = await response.json();
+            console.log(data);
+         };
+
+         postCarForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const name = document.getElementById("name").value;
+            const price = document.getElementById("price").value;
+            const car = { name, price };
+            postCar(car);
+            document.getElementById("name").value = "";
+            document.getElementById("price").value = "";
+         });
+
+         getAllCarsButton.addEventListener("click", async () => {
+            carsList.innerHTML = "";
+            const carsData = await getAllCars();
+            console.log(carsData);
+            carsData.forEach((car) => {
+               const li = document.createElement("li");
+               li.textContent = `ID: ${car._id}, Name: ${car.name}, Price: ${car.price}`;
+               const copyButton = document.createElement("button");
+               copyButton.textContent = "Copy ID";
+               copyButton.addEventListener("click", () => {
+                  navigator.clipboard.writeText(car._id).then(() => {
+                     console.log(`Car ID ${car._id} copied to clipboard!`);
+                  });
+               });
+               li.appendChild(copyButton);
+               carsList.appendChild(li);
+            });
+         });
+
+         deleteCarForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const id = document.getElementById("carIdToDelete").value;
+            deleteCar(id);
+            document.getElementById("carIdToDelete").value = "";
+         });
+
+         getCarByIdForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const id = document.getElementById("carId").value;
+            getCarById(id);
+            document.getElementById("carId").value = "";
+         });
+      </script>
    </body>
 </html>

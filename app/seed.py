@@ -27,7 +27,8 @@ async def seed_data():
         {"name": "Mazda CX-5", "price": 28000},
         {"name": "Subaru Outback", "price": 31000},
     ]
-
+    removed = await collection.delete_many({})
+    print(f"{removed.deleted_count} cars removed from the database.")
     result = await collection.insert_many(seedCarsData)
     print(f"{len(result.inserted_ids)} cars inserted into the database.")
 
